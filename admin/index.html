@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASSA Admin Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans h-screen flex flex-col">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="flex items-center justify-center h-full">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-96 border border-gray-100">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">🔐</div>
+                <h1 class="text-2xl font-bold text-gray-900">ASSA Admin</h1>
+                <p class="text-sm text-gray-500 mt-2">Sign in to manage website</p>
+            </div>
+            <form id="login-form" class="space-y-5">
+                <input type="email" id="login-email" placeholder="Email Address" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                <input type="password" id="login-password" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                <div id="login-error" class="text-red-500 text-sm font-medium text-center hidden"></div>
+                <button type="submit" class="w-full py-3 px-4 rounded-xl shadow text-lg font-bold text-white bg-blue-600 hover:bg-blue-700 transition">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard-screen" class="hidden flex-1 flex flex-col h-full overflow-y-auto">
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center border-b border-gray-200 sticky top-0 z-10">
+            <h1 class="text-xl font-bold text-gray-800">Admin Dashboard</h1>
+            <button id="logout-btn" class="text-red-500 hover:text-red-700 font-bold px-4 py-2 rounded-lg hover:bg-red-50 transition">Log Out</button>
+        </header>
+
+        <main class="flex-1 p-4 sm:p-8 flex flex-col items-center">
+            
+
+            <!-- STEP 1: Main Dashboard -->
+            <div id="step-1" class="w-full max-w-5xl mt-6 px-4">
+                
+                <!-- Greeting -->
+                <div class="mb-8 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800" id="dash-greeting">Good afternoon, Admin 👋</h2>
+                        <p class="text-gray-500 mt-1">What would you like to do today?</p>
+                    </div>
+                    
+                    <div class="hidden md:flex space-x-3">
+                        
+                        <button id="dash-btn-trash" class="bg-white text-gray-700 border border-gray-300 font-bold py-2 px-4 rounded-lg shadow-sm hover:bg-gray-50 transition flex items-center space-x-2">
+                            <span>🗑️ Trash</span>
+                        </button>
+                    </div>
+                </div>
+
+                
+                <!-- Premium AI Feature -->
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl p-6 mb-10 shadow-sm relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 text-purple-200 opacity-50 transform rotate-12">
+                        <svg class="w-48 h-48" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zm0-10a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z"></path></svg>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <h3 class="text-xl font-bold text-purple-900 mb-2 flex items-center space-x-2">
+                            <span>✨</span>
+                            <span>What would you like to do?</span>
+                        </h3>
+                        <div class="flex space-x-4 mt-4">
+                            <input type="text" id="ai-prompt-dash" class="flex-1 px-4 py-4 rounded-xl border border-purple-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg shadow-sm" placeholder="e.g., Add a new free lecture about calculus...">
+                            <button id="btn-parse-ai-dash" class="bg-purple-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:bg-purple-700 hover:-translate-y-1 transition transform whitespace-nowrap">
+                                Tell Assistant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4 mb-6">
+                    <div class="h-px bg-gray-200 flex-1"></div>
+                    <span class="text-gray-400 font-medium text-sm uppercase tracking-wider">Or choose an action</span>
+                    <div class="h-px bg-gray-200 flex-1"></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                    <button class="dash-quick-add bg-blue-600 text-white font-bold py-4 px-6 rounded-2xl shadow hover:bg-blue-700 hover:-translate-y-1 transition transform flex flex-col items-center justify-center text-center group" data-val="news">
+                        <span class="text-3xl mb-2 group-hover:scale-110 transition">📰</span>
+                        <span>+ Add News</span>
+                    </button>
+                    <button class="dash-quick-add bg-indigo-600 text-white font-bold py-4 px-6 rounded-2xl shadow hover:bg-indigo-700 hover:-translate-y-1 transition transform flex flex-col items-center justify-center text-center group" data-val="lectures">
+                        <span class="text-3xl mb-2 group-hover:scale-110 transition">🎓</span>
+                        <span>+ Add Lecture</span>
+                    </button>
+                    <button id="dash-btn-media" class="bg-white border border-gray-300 text-gray-800 font-bold py-4 px-6 rounded-2xl shadow hover:bg-gray-50 hover:-translate-y-1 transition transform flex flex-col items-center justify-center text-center group">
+                        <span class="text-3xl mb-2 group-hover:scale-110 transition">🖼️</span>
+                        <span>Media Library</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Website Overview (Stats) -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-full">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-bold text-gray-800">Overview</h3>
+                                <button id="dash-btn-manage" class="text-blue-600 text-sm font-bold hover:underline">Manage All</button>
+                            </div>
+                            
+                            <div class="space-y-4" id="dash-overview-list">
+                                <p class="text-gray-500 text-center py-4">Loading stats...</p>
+                            </div>
+
+                            <div class="mt-6 pt-6 border-t border-gray-100">
+                                <div class="flex justify-between items-center bg-orange-50 p-3 rounded-lg border border-orange-100">
+                                    <span class="text-orange-800 font-bold">Drafts</span>
+                                    <span class="text-orange-600 font-bold text-lg" id="dash-stat-drafts">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-full">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">Recent Activity</h3>
+                            <div class="space-y-4" id="dash-activity-list">
+                                <p class="text-gray-500 py-4 text-center">Loading activity...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile extra actions -->
+                <div class="mt-8 flex md:hidden flex-col space-y-3">
+                    
+                    <button id="dash-btn-trash-mobile" class="bg-white text-gray-700 border border-gray-300 font-bold py-3 px-4 rounded-xl shadow-sm hover:bg-gray-50 transition text-center">
+                        🗑️ Trash Bin
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Category Selection -->
+            <div id="step-2" class="w-full max-w-4xl hidden mt-6">
+                <div class="flex items-center space-x-4 mb-6">
+                    <button id="btn-back-1" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                    <h2 class="text-2xl font-bold text-gray-800">What do you want to add?</h2>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- Category Cards -->
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="news">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📰</div>
+                        <h3 class="text-lg font-bold text-gray-800">News</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="lectures">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">🎓</div>
+                        <h3 class="text-lg font-bold text-gray-800">Free Lectures</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="courses">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📚</div>
+                        <h3 class="text-lg font-bold text-gray-800">Courses</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="classes">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">🏫</div>
+                        <h3 class="text-lg font-bold text-gray-800">Classes</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="achievements">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">🏆</div>
+                        <h3 class="text-lg font-bold text-gray-800">Achievements</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="books">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📖</div>
+                        <h3 class="text-lg font-bold text-gray-800">Books</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="tests">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📝</div>
+                        <h3 class="text-lg font-bold text-gray-800">Tests</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="about">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">ℹ️</div>
+                        <h3 class="text-lg font-bold text-gray-800">About</h3>
+                    </button>
+                    <button class="cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="contact">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📞</div>
+                        <h3 class="text-lg font-bold text-gray-800">Contact</h3>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP AI: Smart Input -->
+            <div id="step-ai" class="w-full max-w-2xl hidden mt-6">
+                <div class="flex items-center space-x-4 mb-8">
+                    <button id="btn-back-ai" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                    <h2 class="text-2xl font-bold text-gray-800">✨ Ask AI Assistant</h2>
+                </div>
+                
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <p class="text-gray-600 mb-6 text-lg">Tell me what you want to do in simple English. I will prepare the upload form for you!</p>
+                    <textarea id="ai-prompt" rows="4" class="w-full px-4 py-3 border border-purple-300 rounded-xl focus:ring-2 focus:ring-purple-500 shadow-sm text-lg" placeholder="e.g., 'I want to add a new free lecture about algebra...'"></textarea>
+                    
+                    <button id="btn-generate-ai" class="mt-6 w-full bg-purple-600 text-white font-bold py-4 px-6 rounded-xl shadow hover:bg-purple-700 transition flex justify-center items-center text-lg">
+                        ✨ Pre-fill Form
+                    </button>
+                </div>
+            </div>
+
+            
+            <!-- STEP MANAGE CATS: Category Selection for Management -->
+            <div id="step-manage-cats" class="w-full max-w-4xl hidden mt-6">
+                <div class="flex items-center space-x-4 mb-6">
+                    <button id="btn-back-manage-cats" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                    <h2 class="text-2xl font-bold text-gray-800">Which section do you want to manage?</h2>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="news">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📰</div>
+                        <h3 class="text-lg font-bold text-gray-800">News</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="lectures">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">🎓</div>
+                        <h3 class="text-lg font-bold text-gray-800">Free Lectures</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="courses">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📚</div>
+                        <h3 class="text-lg font-bold text-gray-800">Courses</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="classes">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">🏫</div>
+                        <h3 class="text-lg font-bold text-gray-800">Classes</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="achievements">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">🏆</div>
+                        <h3 class="text-lg font-bold text-gray-800">Achievements</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="books">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📖</div>
+                        <h3 class="text-lg font-bold text-gray-800">Books</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="tests">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📝</div>
+                        <h3 class="text-lg font-bold text-gray-800">Tests</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="about">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">ℹ️</div>
+                        <h3 class="text-lg font-bold text-gray-800">About</h3>
+                    </button>
+                    <button class="manage-cat-card bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:border-blue-500 hover:shadow-md transition text-left group" data-val="contact">
+                        <div class="text-4xl mb-4 group-hover:scale-110 transition transform origin-left">📞</div>
+                        <h3 class="text-lg font-bold text-gray-800">Contact</h3>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP MANAGE LIST: Table view -->
+            <div id="step-manage-list" class="w-full max-w-5xl hidden mt-6">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button id="btn-back-manage-list" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                        <h2 class="text-2xl font-bold text-gray-800"><span id="manage-list-title">Content</span></h2>
+                    </div>
+                    <button id="btn-manage-add-new" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition flex items-center space-x-2">
+                        <span>+ Add New</span>
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+                        <input type="text" id="manage-search" placeholder="Search..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 w-64">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
+                                    <th class="p-4 font-semibold">Thumbnail</th>
+                                    <th class="p-4 font-semibold">Title</th>
+                                    <th class="p-4 font-semibold">Status</th>
+                                    <th class="p-4 font-semibold">Date</th>
+                                    <th class="p-4 font-semibold text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="manage-table-body" class="divide-y divide-gray-100">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- STEP MEDIA: Media Library -->
+            <div id="step-media" class="w-full max-w-5xl hidden mt-6">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button id="btn-back-media" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                        <h2 class="text-2xl font-bold text-gray-800">Media Library</h2>
+                    </div>
+                    
+                    <label class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition flex items-center space-x-2 cursor-pointer">
+                        <span>+ Upload</span>
+                        <input type="file" id="media-direct-upload" class="hidden">
+                    </label>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden p-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
+                        <input type="text" id="media-search" placeholder="Search files..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 w-full md:w-64">
+                        <div class="flex space-x-2">
+                            <button class="media-filter px-4 py-2 bg-blue-50 text-blue-700 rounded-lg font-medium border border-blue-200" data-type="all">All</button>
+                            <button class="media-filter px-4 py-2 hover:bg-gray-50 text-gray-700 rounded-lg font-medium border border-transparent" data-type="image">Images</button>
+                            <button class="media-filter px-4 py-2 hover:bg-gray-50 text-gray-700 rounded-lg font-medium border border-transparent" data-type="video">Videos</button>
+                            <button class="media-filter px-4 py-2 hover:bg-gray-50 text-gray-700 rounded-lg font-medium border border-transparent" data-type="pdf">PDFs</button>
+                        </div>
+                    </div>
+                    
+                    <div id="media-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <!-- Media items injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Modal -->
+            <div id="media-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
+                    <button onclick="document.getElementById('media-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                    <h3 class="text-xl font-bold mb-4">File Information</h3>
+                    <div class="space-y-3 text-sm text-gray-700 mb-6">
+                        <p><span class="font-bold">Name:</span> <span id="modal-file-name" class="break-all"></span></p>
+                        <p><span class="font-bold">Size:</span> <span id="modal-file-size"></span></p>
+                        <p><span class="font-bold">Uploaded:</span> <span id="modal-file-date"></span></p>
+                        <p><span class="font-bold">Usage:</span> <span id="modal-file-usage" class="text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded"></span></p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="modal-btn-copy" class="flex-1 py-2 px-4 border border-gray-300 rounded-lg font-bold text-gray-700 hover:bg-gray-50">Copy Link</button>
+                        <button id="modal-btn-delete" class="flex-1 py-2 px-4 bg-red-600 rounded-lg font-bold text-white hover:bg-red-700">Delete</button>
+                    </div>
+                </div>
+            </div>
+
+            
+            
+            <!-- STEP TRASH: Trash Bin -->
+            <div id="step-trash" class="w-full max-w-5xl hidden mt-6">
+                <div class="flex items-center space-x-4 mb-8">
+                    <button id="btn-back-trash" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                    <h2 class="text-2xl font-bold text-gray-800">Trash Bin</h2>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
+                                    <th class="p-4 font-semibold">Title</th>
+                                    <th class="p-4 font-semibold">Section</th>
+                                    <th class="p-4 font-semibold">Deleted</th>
+                                    <th class="p-4 font-semibold text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trash-table-body" class="divide-y divide-gray-100">
+                                <!-- Trashed Items Injected Here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP PREVIEW: Live Preview -->
+            <div id="step-preview" class="w-full max-w-4xl hidden mt-6">
+                <div class="flex items-center space-x-4 mb-8">
+                    <button id="btn-back-preview" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                    <h2 class="text-2xl font-bold text-gray-800">Website Preview</h2>
+                </div>
+                
+                <div class="bg-gray-100 p-8 rounded-2xl border border-gray-300 shadow-inner min-h-[400px] flex justify-center items-center">
+                    <!-- Website context mock -->
+                    <div id="preview-container" class="w-full max-w-sm">
+                        <!-- Card injected here via JS -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-8 p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+                    <p class="text-gray-600 font-medium">This is exactly how visitors will see it.</p>
+                    <div class="flex space-x-4">
+                        <button id="btn-edit-again" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition">Back to Edit</button>
+                        <button id="btn-publish-from-preview" class="px-8 py-3 bg-green-600 text-white font-bold rounded-xl shadow hover:bg-green-700 transition">Publish Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Form Entry -->
+            <div id="step-3" class="w-full max-w-2xl hidden mt-6">
+                <div class="flex items-center space-x-4 mb-8">
+                    <button id="btn-back-2" class="text-gray-400 hover:text-gray-800 transition"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg></button>
+                    <h2 class="text-2xl font-bold text-gray-800">Adding to: <span id="selected-cat-name" class="text-blue-600">Category</span></h2>
+                </div>
+
+                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200">
+                    <form id="add-form" class="space-y-6">
+                        <input type="hidden" id="entry-section">
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">Title</label>
+                                    <input type="text" id="entry-title" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="e.g. Physics Chapter 1" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">Short Description</label>
+                                    <textarea id="entry-desc" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" placeholder="Write a short detail..."></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Category</label>
+                                        <select id="entry-category" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                                            <option value="General">General</option>
+                                            <option value="Science">Science</option>
+                                            <option value="Arts">Arts</option>
+                                            <option value="Important">Important</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Date</label>
+                                        <input type="date" id="entry-date" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">Thumbnail [Image]</label>
+                                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                        <div class="flex flex-col items-center justify-center text-gray-500" id="thumb-placeholder">
+                                            <p class="text-sm font-semibold">Click to upload thumbnail</p>
+                                        </div>
+                                        <div class="flex flex-col items-center justify-center text-green-600 hidden" id="thumb-selected">
+                                            <p class="text-sm font-bold" id="thumb-name-display">Selected</p>
+                                        </div>
+                                        <input type="file" id="entry-thumb" class="hidden" accept="image/*">
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">Media [Video/PDF/Document]</label>
+                                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                        <div class="flex flex-col items-center justify-center text-gray-500" id="file-placeholder">
+                                            <p class="text-sm font-semibold">Click to upload media</p>
+                                        </div>
+                                        <div class="flex flex-col items-center justify-center text-green-600 hidden" id="file-selected">
+                                            <p class="text-sm font-bold" id="file-name-display">Selected</p>
+                                        </div>
+                                        <input type="file" id="entry-file" class="hidden">
+                                    </label>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">Status</label>
+                                    <div class="flex items-center space-x-6 mt-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="radio" name="status" value="DRAFT" class="w-5 h-5 text-blue-600">
+                                            <span class="text-gray-700 font-medium">Draft</span>
+                                        </label>
+
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="radio" name="status" value="PUBLISHED" class="w-5 h-5 text-blue-600" checked>
+                                            <span class="text-gray-700 font-medium">Published</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="radio" name="status" value="ARCHIVED" class="w-5 h-5 text-gray-600">
+                                            <span class="text-gray-700 font-medium">Archived</span>
+                                        </label>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="form-error" class="text-red-500 font-bold hidden bg-red-50 p-4 rounded-xl border border-red-200"></div>
+                        <div id="form-success" class="text-green-600 font-bold hidden bg-green-50 p-4 rounded-xl border border-green-200"></div>
+
+                        <div id="upload-progress" class="hidden">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300 w-full animate-pulse"></div>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-2 font-medium text-center">Uploading files & saving...</p>
+                        </div>
+
+
+                        <div class="flex justify-end space-x-4 pt-4 border-t border-gray-100 mt-6">
+                            <button type="button" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition" onclick="openPreview()">Preview</button>
+                            <button type="button" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-bold hover:bg-gray-50 transition" onclick="submitForm('DRAFT')">Save Draft</button>
+
+                            <button type="button" class="px-8 py-3 bg-green-600 text-white font-bold rounded-xl shadow hover:bg-green-700 transition" onclick="submitForm('PUBLISHED')">Publish</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('assa_token');
+
+        const screens = {
+            login: document.getElementById('login-screen'),
+            dash: document.getElementById('dashboard-screen'),
+            step1: document.getElementById('step-1'),
+            step2: document.getElementById('step-2'),
+            step3: document.getElementById('step-3'),
+            stepAi: document.getElementById('step-ai'),
+
+            stepManageCats: document.getElementById('step-manage-cats'),
+            stepManageList: document.getElementById('step-manage-list'),
+            stepMedia: document.getElementById('step-media'),
+            stepPreview: document.getElementById('step-preview'),
+            stepTrash: document.getElementById('step-trash'),
+
+        };
+
+
+        async function loadStats() {
+            try {
+                // Set Greeting
+                const hour = new Date().getHours();
+                let greeting = 'Good evening';
+                if (hour < 12) greeting = 'Good morning';
+                else if (hour < 18) greeting = 'Good afternoon';
+                document.getElementById('dash-greeting').textContent = `${greeting}, Admin 👋`;
+
+                const res = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': 'Bearer ' + authToken }
+                });
+                const data = await res.json();
+                
+                // Populate Overview
+                document.getElementById('dash-stat-drafts').textContent = data.stats.drafts || 0;
+                
+                const overviewList = document.getElementById('dash-overview-list');
+                overviewList.innerHTML = '';
+                
+                const labels = {
+                    news: 'News',
+                    lectures: 'Free Lectures',
+                    courses: 'Courses',
+                    classes: 'Classes',
+                    achievements: 'Achievements',
+                    books: 'Books',
+                    tests: 'Tests',
+                    about: 'About',
+                    contact: 'Contact'
+                };
+
+                let hasStats = false;
+                for (const [section, count] of Object.entries(data.sectionCounts || {})) {
+                    if (count > 0) {
+                        hasStats = true;
+                        overviewList.innerHTML += `
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-700 font-medium">${labels[section] || section}</span>
+                                <span class="text-gray-900 font-bold bg-gray-100 px-3 py-1 rounded-full">${count}</span>
+                            </div>
+                        `;
+                    }
+                }
+                if (!hasStats) overviewList.innerHTML = '<p class="text-gray-500 text-sm">No published content yet.</p>';
+
+                // Populate Activity
+                const activityList = document.getElementById('dash-activity-list');
+                activityList.innerHTML = '';
+                
+                if (!data.recentActivity || data.recentActivity.length === 0) {
+                    activityList.innerHTML = '<p class="text-gray-500 text-sm">No recent activity.</p>';
+                } else {
+                    data.recentActivity.forEach(act => {
+                        const timeStr = timeAgo(act.date);
+                        activityList.innerHTML += `
+                            <div class="flex items-start space-x-3">
+                                <div class="mt-1 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <div>
+                                    <p class="text-gray-800 text-sm font-medium">${act.message}</p>
+                                    <p class="text-gray-400 text-xs mt-0.5">${timeStr}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (err) {
+                console.warn('Could not load stats');
+            }
+        }
+        
+        function setupDashboardLinks() {
+            // Quick Add
+            document.querySelectorAll('.dash-quick-add').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const val = btn.getAttribute('data-val');
+                    const name = btn.getAttribute('data-name');
+                    document.getElementById('entry-section').value = val;
+                    document.getElementById('selected-cat-name').textContent = name;
+                    resetForm();
+                    document.getElementById('add-form').removeAttribute('data-edit-id');
+                    showView('step3');
+                });
+            });
+
+            // Re-bind old button IDs to new dashboard IDs
+            const bindClick = (id, targetView, action) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', () => {
+                    if (action) action();
+                    showView(targetView);
+                });
+            };
+            
+            bindClick('dash-btn-ai', 'stepAi');
+            bindClick('dash-btn-ai-mobile', 'stepAi');
+            bindClick('dash-btn-trash', 'stepTrash', loadTrashData);
+            bindClick('dash-btn-trash-mobile', 'stepTrash', loadTrashData);
+            bindClick('dash-btn-media', 'stepMedia', loadMediaLibrary);
+            bindClick('dash-btn-manage', 'stepManageCats');
+        }
+        
+        // Call setupDashboardLinks once on load
+        setTimeout(setupDashboardLinks, 100);
+
+
+        function showView(viewName) {
+
+            screens.step1.classList.add('hidden');
+            screens.step2.classList.add('hidden');
+            screens.step3.classList.add('hidden');
+            screens.stepAi.classList.add('hidden');
+
+            screens.stepManageCats.classList.add('hidden');
+            screens.stepManageList.classList.add('hidden');
+            screens.stepMedia.classList.add('hidden');
+            screens.stepPreview.classList.add('hidden');
+            screens.stepTrash.classList.add('hidden');
+
+                        if (viewName === 'step1') {
+                screens.step1.classList.remove('hidden');
+                loadStats();
+            }
+            if (viewName === 'step2') screens.step2.classList.remove('hidden');
+            if (viewName === 'step3') screens.step3.classList.remove('hidden');
+            if (viewName === 'stepAi') screens.stepAi.classList.remove('hidden');
+
+            if (viewName === 'stepManageCats') screens.stepManageCats.classList.remove('hidden');
+            if (viewName === 'stepManageList') screens.stepManageList.classList.remove('hidden');
+            if (viewName === 'stepMedia') screens.stepMedia.classList.remove('hidden');
+            if (viewName === 'stepPreview') screens.stepPreview.classList.remove('hidden');
+            if (viewName === 'stepTrash') screens.stepTrash.classList.remove('hidden');
+
+        }
+
+        function checkSession() {
+            if (authToken) {
+                screens.login.classList.add('hidden');
+                screens.dash.classList.remove('hidden');
+                showView('step1');
+            } else {
+                screens.login.classList.remove('hidden');
+                screens.dash.classList.add('hidden');
+            }
+        }
+
+        // Authentication
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    authToken = data.token;
+                    localStorage.setItem('assa_token', authToken);
+                    errorEl.classList.add('hidden');
+                    checkSession();
+                } else {
+                    errorEl.textContent = data.error || 'Login failed';
+                    errorEl.classList.remove('hidden');
+                }
+            } catch(err) {
+                errorEl.textContent = 'Server is not running.';
+                errorEl.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('assa_token');
+            authToken = null;
+            checkSession();
+        });
+
+        // Navigation flow
+        // document.getElementById('btn-add-new').addEventListener('click', () => showView('step2'));
+        // document.getElementById('btn-ai-assistant').addEventListener('click', () => {
+        //     document.getElementById('ai-prompt').value = '';
+        //     showView('stepAi');
+        // });
+        document.getElementById('btn-back-1').addEventListener('click', () => showView('step1'));
+        document.getElementById('btn-back-2').addEventListener('click', () => showView('step1')); // Adjusted to go back to main menu
+        document.getElementById('btn-back-ai').addEventListener('click', () => showView('step1'));
+
+        
+        // Preview Logic
+        window.openPreview = function() {
+            const title = document.getElementById('entry-title').value;
+            if (!title) {
+                alert('Please enter a title before previewing.');
+                return;
+            }
+            const desc = document.getElementById('entry-desc').value;
+            const category = document.getElementById('entry-category').value;
+            const date = document.getElementById('entry-date').value;
+            
+            const fileInput = document.getElementById('entry-file');
+            const thumbInput = document.getElementById('entry-thumb');
+            
+            let imgUrl = '';
+            
+            // Build Mock Card
+            const container = document.getElementById('preview-container');
+            
+            const renderCard = (imageUrl) => {
+                let metaHtml = '';
+                if (category || date) {
+                    metaHtml = `<div style="font-size:0.85rem; color:#2563eb; margin-bottom:0.5rem; font-weight:bold; text-transform:uppercase; letter-spacing:1px;">
+                                ${category ? category : ''} ${category && date ? '•' : ''} ${date ? date : ''}
+                                </div>`;
+                }
+
+                let contentHtml = `<div style="padding:1.5rem; background:white; border:1px solid #e5e7eb; border-radius:0.5rem; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">`;
+                
+                if (imageUrl) {
+                    contentHtml += `<img src="${imageUrl}" alt="${title}" style="width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">`;
+                }
+                
+                contentHtml += `${metaHtml}<h3 style="font-size:1.2rem;font-weight:700;color:#1e293b;">${title}</h3>`;
+                
+                if (desc) {
+                    contentHtml += `<p style="font-size:1rem;color:#475569;margin-top:0.5rem;">${desc}</p>`;
+                }
+                
+                if (fileInput.files.length > 0 && (!imageUrl || (thumbInput.files.length > 0))) {
+                    contentHtml += `<button style="margin-top: 1rem; display: inline-block; padding:0.5rem 1rem; border:1px solid #2563eb; color:#2563eb; border-radius:0.5rem; font-weight:bold;">View File / Document</button>`;
+                }
+                
+                contentHtml += `</div>`;
+                container.innerHTML = contentHtml;
+                showView('stepPreview');
+            };
+
+            // If there's a thumb file selected, preview it via FileReader
+            if (thumbInput.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    renderCard(e.target.result);
+                }
+                reader.readAsDataURL(thumbInput.files[0]);
+            } 
+            else if (fileInput.files.length > 0 && fileInput.files[0].type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    renderCard(e.target.result);
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            // Fallback for edit mode if no new file is selected but existing item had an image
+            else {
+                // Determine if we are editing and have an existing image
+                const editId = document.getElementById('add-form').getAttribute('data-edit-id');
+                if (editId && window.currentManageData) {
+                    const item = window.currentManageData.find(i => i.id === editId);
+                    if (item) {
+                        const existingImg = item.thumbnail_url || (item.file_url && item.file_url.match(/\.(jpeg|jpg|gif|png)$/i) ? item.file_url : null);
+                        renderCard(existingImg);
+                        return;
+                    }
+                }
+                renderCard(null);
+            }
+        };
+
+        document.getElementById('btn-back-preview').addEventListener('click', () => showView('step3'));
+        document.getElementById('btn-edit-again').addEventListener('click', () => showView('step3'));
+        document.getElementById('btn-publish-from-preview').addEventListener('click', () => {
+            submitForm('PUBLISHED');
+        });
+
+        // AI Assistant Logic (Frontend Parser)
+        function parseAIPrompt(promptText) {
+            const prompt = promptText.toLowerCase();
+            if (!prompt) return;
+            
+            // Default mappings
+            let section = 'news';
+            let sectionName = 'News & Update';
+            let category = 'General';
+            
+            // Detect Section
+            if (prompt.includes('lecture') || prompt.includes('video')) { section = 'lectures'; sectionName = 'Free Lectures'; }
+            else if (prompt.includes('course')) { section = 'courses'; sectionName = 'Courses'; }
+            else if (prompt.includes('class')) { section = 'classes'; sectionName = 'Classes'; }
+            else if (prompt.includes('achieve') || prompt.includes('award')) { section = 'achievements'; sectionName = 'Achievements'; }
+            else if (prompt.includes('book')) { section = 'books'; sectionName = 'Books'; }
+            else if (prompt.includes('test') || prompt.includes('exam')) { section = 'tests'; sectionName = 'Tests'; }
+            else if (prompt.includes('about')) { section = 'about'; sectionName = 'About'; }
+            else if (prompt.includes('contact')) { section = 'contact'; sectionName = 'Contact'; }
+            
+            // Detect Category
+            if (prompt.includes('math') || prompt.includes('algebra')) category = 'Science'; // Quick mapping for math
+            else if (prompt.includes('science') || prompt.includes('physics')) category = 'Science';
+            else if (prompt.includes('art') || prompt.includes('english')) category = 'Arts';
+            else if (prompt.includes('important')) category = 'Important';
+
+            // Extract Title (Crude NLP: Everything after 'about', 'called', or 'for')
+            let title = prompt;
+            const markers = ['about', 'called', 'for', 'titled'];
+            for (const marker of markers) {
+                if (prompt.includes(marker)) {
+                    title = prompt.split(marker)[1].trim();
+                    break;
+                }
+            }
+            
+            // Capitalize title
+            title = title.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+            // Pre-fill form
+            resetForm();
+            document.getElementById('entry-section').value = section;
+            document.getElementById('selected-cat-name').textContent = sectionName;
+            document.getElementById('entry-title').value = title;
+            document.getElementById('entry-category').value = category;
+            
+            showView('step3');
+        }
+
+        document.getElementById('ai-prompt-dash').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') parseAIPrompt(document.getElementById('ai-prompt-dash').value);
+        });
+        
+        document.getElementById('btn-parse-ai-dash').addEventListener('click', () => {
+            parseAIPrompt(document.getElementById('ai-prompt-dash').value);
+        });
+
+        document.getElementById('btn-generate-ai').addEventListener('click', () => {
+            parseAIPrompt(document.getElementById('ai-prompt').value);
+        });
+
+        
+        
+        // document.getElementById('btn-media').addEventListener('click', () => {
+        //     loadMediaLibrary();
+        //     showView('stepMedia');
+        // });
+        document.getElementById('btn-back-media').addEventListener('click', () => showView('step1'));
+
+        window.currentMediaData = [];
+        window.currentMediaFilter = 'all';
+
+        async function loadMediaLibrary() {
+            const grid = document.getElementById('media-grid');
+            grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">Loading media...</p>';
+            try {
+                const res = await fetch('/api/admin/media', {
+                    headers: { 'Authorization': 'Bearer ' + authToken }
+                });
+                const data = await res.json();
+                window.currentMediaData = data;
+                renderMediaGrid();
+            } catch(e) {
+                grid.innerHTML = '<p class="col-span-full text-center text-red-500 py-8">Failed to load media</p>';
+            }
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+        }
+
+        function renderMediaGrid() {
+            const grid = document.getElementById('media-grid');
+            const q = document.getElementById('media-search').value.toLowerCase();
+            grid.innerHTML = '';
+            
+            let filtered = window.currentMediaData.filter(m => m.name.toLowerCase().includes(q));
+            
+            if (window.currentMediaFilter !== 'all') {
+                filtered = filtered.filter(m => {
+                    const ext = m.name.split('.').pop().toLowerCase();
+                    if (window.currentMediaFilter === 'image') return ['jpg','jpeg','png','gif','webp'].includes(ext);
+                    if (window.currentMediaFilter === 'video') return ['mp4','avi','mov','mkv'].includes(ext);
+                    if (window.currentMediaFilter === 'pdf') return ['pdf'].includes(ext);
+                    return true;
+                });
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No files found</p>';
+                return;
+            }
+
+            filtered.forEach(file => {
+                const div = document.createElement('div');
+                div.className = 'border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md cursor-pointer transition group';
+                div.onclick = () => openMediaModal(file);
+                
+                const ext = file.name.split('.').pop().toLowerCase();
+                const isImage = ['jpg','jpeg','png','gif','webp'].includes(ext);
+                
+                let preview = `<div class="w-full h-32 bg-gray-100 flex items-center justify-center text-4xl group-hover:scale-105 transition transform">📄</div>`;
+                if (isImage) {
+                    preview = `<img src="${file.url}" class="w-full h-32 object-cover group-hover:scale-105 transition transform">`;
+                } else if (['mp4','avi','mov','mkv'].includes(ext)) {
+                    preview = `<div class="w-full h-32 bg-gray-900 flex items-center justify-center text-4xl group-hover:scale-105 transition transform text-white">▶️</div>`;
+                }
+                
+                div.innerHTML = `
+                    <div class="overflow-hidden bg-gray-100">${preview}</div>
+                    <div class="p-3">
+                        <p class="text-xs font-semibold text-gray-800 truncate" title="${file.name}">${file.name}</p>
+                        <p class="text-xs text-gray-500">${formatBytes(file.size)}</p>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        document.getElementById('media-search').addEventListener('input', renderMediaGrid);
+        
+        document.querySelectorAll('.media-filter').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.media-filter').forEach(b => {
+                    b.classList.remove('bg-blue-50', 'text-blue-700', 'border-blue-200');
+                    b.classList.add('text-gray-700', 'border-transparent');
+                });
+                e.target.classList.remove('text-gray-700', 'border-transparent');
+                e.target.classList.add('bg-blue-50', 'text-blue-700', 'border-blue-200');
+                window.currentMediaFilter = e.target.getAttribute('data-type');
+                renderMediaGrid();
+            });
+        });
+
+        function openMediaModal(file) {
+            document.getElementById('modal-file-name').textContent = file.name;
+            document.getElementById('modal-file-size').textContent = formatBytes(file.size);
+            document.getElementById('modal-file-date').textContent = new Date(file.created_at).toLocaleDateString();
+            document.getElementById('modal-file-usage').textContent = `Used in ${file.used_count} places`;
+            
+            const btnCopy = document.getElementById('modal-btn-copy');
+            btnCopy.onclick = () => {
+                navigator.clipboard.writeText(window.location.origin + file.url);
+                btnCopy.textContent = 'Copied!';
+                setTimeout(() => btnCopy.textContent = 'Copy Link', 2000);
+            };
+
+            const btnDelete = document.getElementById('modal-btn-delete');
+            if (file.used_count > 0) {
+                btnDelete.classList.add('opacity-50', 'cursor-not-allowed');
+                btnDelete.onclick = () => alert(`Cannot delete. This file is currently used in ${file.used_count} places.`);
+            } else {
+                btnDelete.classList.remove('opacity-50', 'cursor-not-allowed');
+                btnDelete.onclick = async () => {
+                    if (!confirm('Are you sure you want to delete this file?')) return;
+                    try {
+                        const res = await fetch(`/api/admin/media/${file.name}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': 'Bearer ' + authToken }
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            document.getElementById('media-modal').classList.add('hidden');
+                            loadMediaLibrary();
+                        } else {
+                            alert(data.error);
+                        }
+                    } catch(err) {
+                        alert('Delete failed');
+                    }
+                };
+            }
+            
+            document.getElementById('media-modal').classList.remove('hidden');
+        }
+
+        document.getElementById('media-direct-upload').addEventListener('change', async (e) => {
+            if (e.target.files.length === 0) return;
+            const file = e.target.files[0];
+            try {
+                // Show a quick visual indication
+                e.target.parentElement.innerHTML = '<span>Uploading...</span>';
+                const url = await uploadFile(file);
+                // Reset input
+                e.target.parentElement.innerHTML = '<span>+ Upload</span><input type="file" id="media-direct-upload" class="hidden">';
+                // Reattach listener since we replaced HTML
+                document.getElementById('media-direct-upload').addEventListener('change', arguments.callee);
+                loadMediaLibrary();
+            } catch(err) {
+                alert('Upload failed: ' + err.message);
+                e.target.parentElement.innerHTML = '<span>+ Upload</span><input type="file" id="media-direct-upload" class="hidden">';
+                document.getElementById('media-direct-upload').addEventListener('change', arguments.callee);
+            }
+        });
+
+        // document.getElementById('btn-manage').addEventListener('click', () => showView('stepManageCats'));
+        document.getElementById('btn-back-manage-cats').addEventListener('click', () => showView('step1'));
+        document.getElementById('btn-back-manage-list').addEventListener('click', () => showView('stepManageCats'));
+        
+        let currentManageSection = '';
+        
+        document.querySelectorAll('.manage-cat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const val = card.getAttribute('data-val');
+                const name = card.querySelector('h3').textContent;
+                currentManageSection = val;
+                document.getElementById('manage-list-title').textContent = name;
+                document.getElementById('entry-section').value = val;
+                document.getElementById('selected-cat-name').textContent = name;
+                loadManageData(val);
+                showView('stepManageList');
+            });
+        });
+
+        document.getElementById('btn-manage-add-new').addEventListener('click', () => {
+            resetForm();
+            document.getElementById('add-form').removeAttribute('data-edit-id');
+            showView('step3');
+        });
+
+        async function loadManageData(section) {
+            const tbody = document.getElementById('manage-table-body');
+            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">Loading...</td></tr>';
+            try {
+                const res = await fetch(`/api/admin/content/${section}`, {
+                    headers: { 'Authorization': 'Bearer ' + authToken }
+                });
+                const data = await res.json();
+                window.currentManageData = data;
+                renderManageTable(data);
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500">Failed to load data</td></tr>';
+            }
+        }
+
+        function renderManageTable(data) {
+            const tbody = document.getElementById('manage-table-body');
+            tbody.innerHTML = '';
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">No content found</td></tr>';
+                return;
+            }
+            
+            data.forEach(item => {
+                if (item.status === 'TRASHED') return;
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition';
+                
+                let thumbHtml = '<div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center text-gray-400">📄</div>';
+                const imgUrl = item.thumbnail_url || (item.file_url && item.file_url.match(/\.(jpeg|jpg|gif|png)$/i) ? item.file_url : null);
+                if (imgUrl) {
+                    thumbHtml = `<img src="${imgUrl}" class="w-12 h-12 object-cover rounded shadow-sm">`;
+                }
+
+                const statusColor = item.status === 'PUBLISHED' ? 'text-green-600 bg-green-50' : (item.status === 'ARCHIVED' ? 'text-gray-600 bg-gray-100' : 'text-orange-600 bg-orange-50');
+                
+                tr.innerHTML = `
+                    <td class="p-4">${thumbHtml}</td>
+                    <td class="p-4 font-semibold text-gray-800">${item.title}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor}">${item.status || 'PUBLISHED'}</span>
+                    </td>
+                    <td class="p-4 text-gray-500 text-sm">${item.date || '-'}</td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="editItem('${item.id}')" class="text-blue-600 hover:text-blue-800 font-medium">Edit</button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="toggleStatus('${item.id}')" class="text-gray-600 hover:text-gray-800 font-medium">${item.status === 'DRAFT' ? 'Publish' : 'Unpublish'}</button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="deleteItem('${item.id}')" class="text-red-600 hover:text-red-800 font-medium">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        document.getElementById('manage-search').addEventListener('input', (e) => {
+            const q = e.target.value.toLowerCase();
+            if (!window.currentManageData) return;
+            const filtered = window.currentManageData.filter(i => i.title.toLowerCase().includes(q));
+            renderManageTable(filtered);
+        });
+
+        window.editItem = function(id) {
+            const item = window.currentManageData.find(i => i.id === id);
+            if (!item) return;
+            resetForm();
+            document.getElementById('entry-title').value = item.title || '';
+            document.getElementById('entry-desc').value = item.description || '';
+            if (item.category) document.getElementById('entry-category').value = item.category;
+            if (item.date) document.getElementById('entry-date').value = item.date;
+            
+            const radios = document.getElementsByName('status');
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].value === (item.status || 'PUBLISHED')) radios[i].checked = true;
+            }
+            
+            document.getElementById('add-form').setAttribute('data-edit-id', id);
+            showView('step3');
+        };
+
+        window.toggleStatus = async function(id) {
+            const item = window.currentManageData.find(i => i.id === id);
+            if (!item) return;
+            const newStatus = item.status === 'DRAFT' ? 'PUBLISHED' : 'DRAFT';
+            
+            try {
+                await fetch(`/api/admin/content/${currentManageSection}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                loadManageData(currentManageSection);
+            } catch(e) { alert('Error updating status'); }
+        };
+
+        window.deleteItem = async function(id) {
+            if (!confirm('Move this item to trash?')) return;
+            try {
+                await fetch(`/api/admin/content/${currentManageSection}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+                    body: JSON.stringify({ status: 'TRASHED', trashed_at: new Date().toISOString() })
+                });
+                loadManageData(currentManageSection);
+            } catch(e) { alert('Error deleting item'); }
+        };
+
+        
+        // document.getElementById('btn-trash').addEventListener('click', () => {
+        //     loadTrashData();
+        //     showView('stepTrash');
+        // });
+        document.getElementById('btn-back-trash').addEventListener('click', () => showView('step1'));
+
+        async function loadTrashData() {
+            const tbody = document.getElementById('trash-table-body');
+            tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-500">Loading...</td></tr>';
+            try {
+                const res = await fetch('/api/admin/trash', { headers: { 'Authorization': 'Bearer ' + authToken } });
+                const data = await res.json();
+                renderTrashTable(data);
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-red-500">Failed to load trash</td></tr>';
+            }
+        }
+
+        function timeAgo(dateStr) {
+            const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
+            return Math.floor(seconds) + " seconds ago";
+        }
+
+        function renderTrashTable(data) {
+            const tbody = document.getElementById('trash-table-body');
+            tbody.innerHTML = '';
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-gray-500">Trash is empty</td></tr>';
+                return;
+            }
+            
+            data.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition';
+                
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-gray-800">${item.title}</td>
+                    <td class="p-4 text-sm text-gray-600 capitalize">${item.section}</td>
+                    <td class="p-4 text-sm text-gray-500">${timeAgo(item.trashed_at || item.created_at)}</td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="restoreItem('${item.section}', '${item.id}')" class="text-blue-600 hover:text-blue-800 font-medium">Restore</button>
+                        <span class="text-gray-300">|</span>
+                        <button onclick="deleteItemPermanent('${item.section}', '${item.id}')" class="text-red-600 hover:text-red-800 font-medium">Delete Permanently</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.restoreItem = async function(section, id) {
+            try {
+                await fetch(`/api/admin/content/${section}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+                    body: JSON.stringify({ status: 'DRAFT', trashed_at: null })
+                });
+                loadTrashData();
+            } catch(e) { alert('Error restoring item'); }
+        };
+
+        window.deleteItemPermanent = async function(section, id) {
+            if (!confirm('Are you sure? This cannot be undone.')) return;
+            try {
+                await fetch(`/api/admin/content/${section}/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': 'Bearer ' + authToken }
+                });
+                loadTrashData();
+            } catch(e) { alert('Error deleting item'); }
+        };
+
+        // Form reset logic
+        function resetForm() {
+            document.getElementById('add-form').reset();
+            document.getElementById('file-placeholder').classList.remove('hidden');
+            document.getElementById('file-selected').classList.add('hidden');
+            document.getElementById('thumb-placeholder').classList.remove('hidden');
+            document.getElementById('thumb-selected').classList.add('hidden');
+            document.getElementById('form-error').classList.add('hidden');
+            document.getElementById('form-success').classList.add('hidden');
+            // Set today's date
+            document.getElementById('entry-date').valueAsDate = new Date();
+        }
+
+        // Category selection
+        document.querySelectorAll('.cat-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const val = card.getAttribute('data-val');
+                const name = card.querySelector('h3').textContent;
+                
+                document.getElementById('entry-section').value = val;
+                document.getElementById('selected-cat-name').textContent = name;
+                
+                resetForm();
+                showView('step3');
+            });
+        });
+
+        // File Selection UI
+        document.getElementById('entry-file').addEventListener('change', (e) => {
+            const placeholder = document.getElementById('file-placeholder');
+            const selected = document.getElementById('file-selected');
+            const nameDisplay = document.getElementById('file-name-display');
+            
+            if (e.target.files.length > 0) {
+                placeholder.classList.add('hidden');
+                selected.classList.remove('hidden');
+                nameDisplay.textContent = e.target.files[0].name;
+            } else {
+                placeholder.classList.remove('hidden');
+                selected.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('entry-thumb').addEventListener('change', (e) => {
+            const placeholder = document.getElementById('thumb-placeholder');
+            const selected = document.getElementById('thumb-selected');
+            const nameDisplay = document.getElementById('thumb-name-display');
+            
+            if (e.target.files.length > 0) {
+                placeholder.classList.add('hidden');
+                selected.classList.remove('hidden');
+                nameDisplay.textContent = e.target.files[0].name;
+            } else {
+                placeholder.classList.remove('hidden');
+                selected.classList.add('hidden');
+            }
+        });
+
+        // File Upload Helper
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('media', file);
+            const res = await fetch('/api/admin/upload', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + authToken },
+                body: formData
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Upload failed');
+            return data.url;
+        }
+
+
+        // Submission Logic
+        async function submitForm(statusValue, isPreview = false) {
+
+            const section = document.getElementById('entry-section').value;
+            const title = document.getElementById('entry-title').value;
+            const desc = document.getElementById('entry-desc').value;
+            const category = document.getElementById('entry-category').value;
+            const date = document.getElementById('entry-date').value;
+            const status = statusValue; // DRAFT or PUBLISHED
+
+            const fileInput = document.getElementById('entry-file');
+            const thumbInput = document.getElementById('entry-thumb');
+            
+            const errorEl = document.getElementById('form-error');
+            const successEl = document.getElementById('form-success');
+            const progress = document.getElementById('upload-progress');
+
+            if (!title) {
+                errorEl.textContent = '❌ Error: Title is required.';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            errorEl.classList.add('hidden');
+            successEl.classList.add('hidden');
+            progress.classList.remove('hidden');
+            
+            try {
+                let fileUrl = null;
+                let thumbUrl = null;
+
+                // Upload Thumbnail if exists
+                if (thumbInput.files.length > 0) {
+                    thumbUrl = await uploadFile(thumbInput.files[0]);
+                }
+
+                // Upload Media if exists
+                if (fileInput.files.length > 0) {
+                    fileUrl = await uploadFile(fileInput.files[0]);
+                }
+                
+                // Save Content Data
+                const payload = {
+                    section, 
+                    title, 
+                    description: desc, 
+                    category,
+                    date,
+                    status,
+                    file_url: fileUrl,
+                    thumbnail_url: thumbUrl
+                };
+
+                const editId = document.getElementById('add-form').getAttribute('data-edit-id');
+                const url = editId ? `/api/admin/content/${section}/${editId}` : '/api/admin/content';
+                const method = editId ? 'PUT' : 'POST';
+
+                const contentRes = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+                    body: JSON.stringify(payload)
+                });
+                
+                const contentData = await contentRes.json();
+                if (!contentData.success) throw new Error(contentData.error || 'Failed to save content');
+                
+
+                progress.classList.add('hidden');
+                successEl.textContent = status === 'DRAFT' ? '📝 Saved as Draft successfully!' : '🎉 Published! The item is now live.';
+                if (isPreview) successEl.textContent = 'Opening Preview...';
+                successEl.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    if (isPreview) {
+                        window.open('/', '_blank');
+                    }
+                    if (editId) {
+                        loadManageData(section);
+                        showView('stepManageList');
+                    } else {
+                        showView('step1');
+                    }
+                }, 1500);
+
+
+            } catch (err) {
+                progress.classList.add('hidden');
+                errorEl.textContent = '❌ Error: ' + err.message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        checkSession();
+    </script>
+</body>
+</html>
